@@ -32,7 +32,8 @@
          }
      };
      $runtime = {
-         inits: []
+         inits: [],
+         middlewares: []
      }
      constructor() {
 
@@ -79,7 +80,7 @@
          return this;
      }
      use(callback) {
-         this.init(callback);
+         this.$runtime.middlewares.push(callback.bind(this.globalData));
          return this;
      }
      service(name, object) {
@@ -176,6 +177,42 @@
                      }
 
                      Object.assign(params, url_info.query);
+
+
+                     let handler_object = {
+
+                        req: request,
+                        res: response,
+                        canNext:true,
+                        params(key, dvalue) {
+                            if (arguments.length == 0) return params;
+                            return params.hasOwnProperty(key) ? params[key] : dvalue;
+                        },
+                        paramsSet(key,value){
+                            params[key] = value;
+                            return this;
+                        },
+                        success(data) {
+                            that.apiSuccess(this.res, data);
+                            this.canNext = false;
+                        },
+                        error(msg = "error", code = 0, data = {}) {
+                            that.apiError(this.res, msg, code, data);
+                            this.canNext = false;
+                        }
+
+                    };
+
+                    let m_len = this.$runtime.middlewares.length;
+                    for (let i=0;i<m_len;i++) {
+                        if(!handler_object.canNext){
+                            return;
+                        }
+                        await this.$runtime.middlewares[i](handler_object);
+                    }
+                    
+
+
                      if (that.module_s.hasOwnProperty(pathname)) {
                          handler = handler(params);
                          if (!handler) {
@@ -184,22 +221,7 @@
                          }
                      }
                      try {
-                         let out = await handler({
-
-                             req: request,
-                             res: response,
-                             params(key, dvalue) {
-                                 if (arguments.length == 0) return params;
-                                 return params.hasOwnProperty(key) ? params[key] : dvalue;
-                             },
-                             success(data) {
-                                 that.apiSuccess(this.res, data);
-                             },
-                             error(msg = "error", code = 0, data = {}) {
-                                 that.apiError(this.res, msg, code, data);
-                             }
-
-                         })
+                         let out = await handler(handler_object)
                          if (out !== undefined) {
                              that.apiSuccess(response, out);
                          }

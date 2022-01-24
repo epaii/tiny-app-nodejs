@@ -24,4 +24,10 @@ new  App().serviceDir(__dirname+"/service").init( async function(app){
             ok();
         }, 3000);
     })
+}).use(function(ctx){
+    console.log("a")
+    console.log(this.$service);
+}).use(function(ctx){
+    console.log("b")
+    console.log(this.$service);
 }).module(__dirname+"/app").listen(8896);

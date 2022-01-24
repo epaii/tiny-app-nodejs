@@ -184,6 +184,7 @@
                         req: request,
                         res: response,
                         canNext:true,
+                        shareData:{},
                         params(key, dvalue) {
                             if (arguments.length == 0) return params;
                             return params.hasOwnProperty(key) ? params[key] : dvalue;

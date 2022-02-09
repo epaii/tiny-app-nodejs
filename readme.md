@@ -67,7 +67,30 @@ let age =  ctx.params("age",10);//默认值为10
 let allData = ctx.params() ;// 返回所有参数
 ```
 
-`ctx.success` 和 `ctx.error` 是两个api接口化的输出，`ctx.html` 是传统html的输出
+### `ctx.success` 和 `ctx.error` 是两个api接口化的输出，`ctx.html` 是传统html的输出
+
+
+### `app.listen()` 方法只是以下方法的语法糖:
+```js
+const http = require('http');
+const app = new App();
+http.createServer(app.callback()).listen(8896);
+```
+
+这意味着您可以将同一个应用程序同时作为 HTTP 和 HTTPS 或多个地址：
+
+```js
+const http = require('http');
+const https = require('https');
+const App=require("epii-tiny-app");
+const app = new App();
+http.createServer(app.callback()).listen(8896);
+https.createServer(app.callback()).listen(8897);
+```
+
+### `app.callback()`
+
+返回适用于 http.createServer() 方法的回调函数来处理请求。你也可以使用此回调函数将 App 应用程序挂载到 Connect/Express 应用程序中。
 
 ## 二 模块的使用
 > 一个系统，我们一般分为多个模块，比如管理后台，用户中心，通过 `route`模式每一个api都需要设置，对于综合系统比较繁琐，而模块化正是解决类似的问题。

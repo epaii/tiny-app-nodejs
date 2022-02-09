@@ -67,6 +67,9 @@
              console.log(baseDir + "is not exist");
          }
 
+         if(name.indexOf("/")===0){
+             name = name.substr(1);
+         }
          this.module_s["/" + name] = {
              dir: baseDir,
              apps: {
@@ -181,37 +184,41 @@
 
                      let handler_object = {
 
-                        req: request,
-                        res: response,
-                        canNext:true,
-                        shareData:{},
-                        params(key, dvalue) {
-                            if (arguments.length == 0) return params;
-                            return params.hasOwnProperty(key) ? params[key] : dvalue;
-                        },
-                        paramsSet(key,value){
-                            params[key] = value;
-                            return this;
-                        },
-                        success(data) {
-                            that.apiSuccess(this.res, data);
-                            this.canNext = false;
-                        },
-                        error(msg = "error", code = 0, data = {}) {
-                            that.apiError(this.res, msg, code, data);
-                            this.canNext = false;
-                        }
+                         req: request,
+                         res: response,
+                         canNext: true,
+                         shareData: {},
+                         params(key, dvalue) {
+                             if (arguments.length == 0) return params;
+                             return params.hasOwnProperty(key) ? params[key] : dvalue;
+                         },
+                         paramsSet(key, value) {
+                             params[key] = value;
+                             return this;
+                         },
+                         success(data) {
+                             that.apiSuccess(this.res, data);
+                             this.canNext = false;
+                         },
+                         error(msg = "error", code = 0, data = {}) {
+                             that.apiError(this.res, msg, code, data);
+                             this.canNext = false;
+                         },
+                         html(htmlString){
+                             this.req.end(htmlString);
+                             this.canNext = false;
+                         }
 
-                    };
+                     };
 
-                    let m_len = this.$runtime.middlewares.length;
-                    for (let i=0;i<m_len;i++) {
-                        if(!handler_object.canNext){
-                            return;
-                        }
-                        await this.$runtime.middlewares[i](handler_object);
-                    }
-                    
+                     let m_len = this.$runtime.middlewares.length;
+                     for (let i = 0; i < m_len; i++) {
+                         if (!handler_object.canNext) {
+                             return;
+                         }
+                         await this.$runtime.middlewares[i](handler_object);
+                     }
+
 
 
                      if (that.module_s.hasOwnProperty(pathname)) {

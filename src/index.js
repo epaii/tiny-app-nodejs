@@ -67,7 +67,7 @@
              console.log(baseDir + "is not exist");
          }
 
-         if(name.indexOf("/")===0){
+         if (name.indexOf("/") === 0) {
              name = name.substr(1);
          }
          this.module_s["/" + name] = {
@@ -189,6 +189,7 @@
                          canNext: true,
                          shareData: {},
                          params(key, dvalue) {
+                             throw new Error("testerror");
                              if (arguments.length == 0) return params;
                              return params.hasOwnProperty(key) ? params[key] : dvalue;
                          },
@@ -204,9 +205,12 @@
                              that.apiError(this.res, msg, code, data);
                              this.canNext = false;
                          },
-                         html(htmlString){
+                         html(htmlString) {
                              this.req.end(htmlString);
                              this.canNext = false;
+                         },
+                         content(content) {
+                             this.html(content);
                          }
 
                      };
@@ -234,7 +238,8 @@
                              that.apiSuccess(response, out);
                          }
                      } catch (error) {
-                         that.apiError(response, error);
+
+                         that.apiError(response, typeof error === "string" ? error : error.message);
 
                      }
 

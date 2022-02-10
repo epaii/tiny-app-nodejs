@@ -53,7 +53,7 @@ new  App().route("/",function(ctx){
     },
     error(msg = "error", code = 0, data = {}) {
     },
-    html(htmlString){
+    content(htmlString){
     }
 
 }
@@ -67,7 +67,7 @@ let age =  ctx.params("age",10);//默认值为10
 let allData = ctx.params() ;// 返回所有参数
 ```
 
-### `ctx.success` 和 `ctx.error` 是两个api接口化的输出，`ctx.html` 是传统html的输出
+### `ctx.success` 和 `ctx.error` 是两个api接口化的输出，`ctx.content` 是传统html的输出
 
 
 ### `app.listen()` 方法只是以下方法的语法糖:

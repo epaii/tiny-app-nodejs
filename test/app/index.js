@@ -4,6 +4,6 @@ module.exports={
     },
     test(ctx){
         console.log(this.$service);
-        return "tsetewt"
+        return "tsetewtddd"
     }
 }

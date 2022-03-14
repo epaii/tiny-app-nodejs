@@ -18,16 +18,16 @@
 
 const App=require("../src/index");
  
-new  App().serviceDir(__dirname+"/service").init( async function(app){
-    return new Promise(ok=>{
-        setTimeout(() => {
-            ok();
-        }, 3000);
-    })
-}).use(function(ctx){
+new  App().serviceDir(__dirname+"/service").use(function(ctx){
     console.log("a")
     console.log(this.$service);
 }).use(function(ctx){
     console.log("b")
     console.log(this.$service);
-}).module(__dirname+"/app").listen(8896);
+}).route("/test/(.*?)/(.*?)$", function (ctx) {
+   // console.log(this.$service);
+    ctx.success("hello world"+ JSON.stringify(ctx.params()));    
+
+})
+.route("/assets",require(__dirname+"/../../tiny-app-nodejs-assets-handler/src/index.js").callback(__dirname+"/assets"))
+.module(__dirname+"/app").listen(8896);

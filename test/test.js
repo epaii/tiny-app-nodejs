@@ -13,6 +13,8 @@ new App().init((app) => {
             ok();
         }, 3000);
     })
+}).route("/test/(.*?)/(.*?)$", function (ctx) {
+    ctx.success("hello world"+ctx.params());    
 }).route("/", function (ctx) {
     ctx.success("hello world"+ctx.params());
 }).module("/user", __dirname + "/user").listen(8896);

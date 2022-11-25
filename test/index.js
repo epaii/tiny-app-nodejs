@@ -22,10 +22,12 @@ new  App().serviceDir(__dirname+"/service").use(function(ctx){
     console.log("a")
     console.log(this.$service);
 }).use(function(ctx){
+       
     console.log("b")
     console.log(this.$service);
 }).route("/test/(.*?)/(.*?)$", function (ctx) {
    // console.log(this.$service);
+   
     ctx.success("hello world"+ JSON.stringify(ctx.params()));    
 
 })

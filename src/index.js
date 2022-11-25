@@ -1,5 +1,5 @@
 const url = require("url");
-
+const queryString = require("querystring");
 const fs = require("fs");
 const path = require("path");
 const { constants } = require("buffer");
@@ -23,21 +23,19 @@ function walkSync(currentDirPath, bindToObject) {
 
 
 class App {
-    route_maps = {
 
-    };
-    module_s = {};
-    globalData = {
-        $service: {
-
-        }
-    };
-    $runtime = {
-        inits: [],
-        middlewares: []
-    }
     constructor() {
+        this.route_maps = {};
+        this.module_s = {};
+        this.globalData = {
+            $service: {
 
+            }
+        }
+        this.$runtime = {
+            inits: [],
+            middlewares: []
+        }
     }
     responseJson(res, data) {
         res.setHeader('Content-Type', 'text/plain; charset=utf-8');
@@ -76,7 +74,7 @@ class App {
             apps: {
 
             },
-            name:"/" + name
+            name: "/" + name
         }
         return this;
     }
@@ -102,6 +100,9 @@ class App {
         }
 
         return this;
+    }
+    servicePath(path) {
+        return this.serviceDir(path);
     }
     findHander(pathname) {
         for (let key in this.route_maps) {
@@ -157,14 +158,14 @@ class App {
                 return null;
 
             },
-            name:moduleInfo.name
+            name: moduleInfo.name
         }
     }
     async callback() {
         let that = this;
         let inits_l = this.$runtime.inits.length;
         for (let i = 0; i < inits_l; i++) {
-            await (this.$runtime.inits[i].bind(this.globalData))(this);
+            await (this.$runtime.inits[i].bind(this.globalData))(this, this.globalData);
         }
 
         for (let name in this.module_s) {
@@ -176,10 +177,10 @@ class App {
             let url_info = url.parse(request.url, true);
 
             let pathname = url_info.pathname;
- 
+
             let handler = this.findHander(pathname);
 
- 
+
             if (!handler) {
                 this.apiError(response, "没有处理器");
             } else {
@@ -195,7 +196,12 @@ class App {
 
                     var params = {};
                     try {
-                        params = JSON.parse(postData.toString());
+                        //  console.log(request.headers);
+                        if (request.headers["content-type"] && (request.headers["content-type"].indexOf("json") > 0)) {
+                            params = JSON.parse(postData.toString());
+                        } else {
+                            params = queryString.parse(postData.toString());
+                        }
                     } catch (e) {
                         params = {};
                     }
@@ -213,7 +219,7 @@ class App {
                         res: response,
                         canNext: true,
                         shareData: {},
-                        params(key, dvalue) {
+                        params(key, dvalue = null) {
 
                             if (arguments.length == 0) return params;
                             return params.hasOwnProperty(key) ? params[key] : dvalue;
@@ -245,7 +251,7 @@ class App {
                         if (!handler_object.canNext) {
                             return;
                         }
-                        await this.$runtime.middlewares[i](handler_object);
+                        await this.$runtime.middlewares[i](handler_object, this.globalData);
                     }
 
                     handler = handler.handler;
@@ -259,11 +265,11 @@ class App {
                     }
 
                     if (!handler) {
-                        this.apiError(response, "没有app处理器");
+                        that.apiError(response, "没有app处理器");
                         return;
                     }
                     try {
-                        let out = await handler(handler_object)
+                        let out = await handler(handler_object, that.globalData)
                         if (out !== undefined) {
                             that.apiSuccess(response, out);
                         }
@@ -279,8 +285,8 @@ class App {
         }
 
     }
-  
-    async listen(port, httpsOptions) {
+
+    async listen(port, httpsOptions = null) {
         try {
             if (httpsOptions) {
                 require("https").createServer(httpsOptions, await this.callback()).listen(port);

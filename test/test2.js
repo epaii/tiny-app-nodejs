@@ -1,5 +1,9 @@
-const  reg = new RegExp("/epii-app/(.*?)/(\\d+)$", "i");
-console.log(reg.exec("/epii-app/adsfas/43").length)
+const App = require("../src");
 
-const  reg1 = new RegExp("^/epii-app", "i");
-console.log(reg1.exec("/epii-app").length)
+let app = new App();
+
+app.use(function (ctx, globalData) {
+
+}).route("/test", function (ctx) {
+    return ctx.params();
+}).listen(8891)

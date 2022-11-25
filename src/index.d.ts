@@ -46,6 +46,7 @@ declare class App {
     route(path: String, handler: ContextHandler): App;
     listen(port: Number, httpsOptions?: https.ServerOptions): Promise;
     callback(): Promise<http.RequestListener>
+    static createServer():App;
 }
 
 export = App;

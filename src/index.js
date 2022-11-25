@@ -23,7 +23,9 @@ function walkSync(currentDirPath, bindToObject) {
 
 
 class App {
-
+    static createServer(){
+        return new App();
+    }
     constructor() {
         this.route_maps = {};
         this.module_s = {};

@@ -202,7 +202,12 @@ class App {
                         if (request.headers["content-type"] && (request.headers["content-type"].indexOf("json") > 0)) {
                             params = JSON.parse(postData.toString());
                         } else {
-                            params = queryString.parse(postData.toString());
+                            let postString = postData.toString();
+                            if(postString.length>0)
+                            {
+                                params = JSON.parse(JSON.stringify(queryString.parse(postData.toString())));
+
+                            }
                         }
                     } catch (e) {
                         params = {};

@@ -244,7 +244,8 @@ class App {
                             this.canNext = false;
                         },
                         html(htmlString) {
-                            this.req.end(htmlString);
+                            this.res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+                            this.res.end(htmlString);
                             this.canNext = false;
                         },
                         content(content) {

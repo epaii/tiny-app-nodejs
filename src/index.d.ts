@@ -44,7 +44,7 @@ declare class App {
     service(name: String, service: Object): App;
     servicePath(path: String): App;
     route(path: String, handler: ContextHandler): App;
-    listen(port: Number, httpsOptions?: https.ServerOptions): Promise;
+    listen(port: Number, httpsOptions?: https.ServerOptions): Promise<http.Server>;
     callback(): Promise<http.RequestListener>
     static createServer():App;
 }

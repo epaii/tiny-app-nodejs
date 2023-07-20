@@ -23,7 +23,7 @@ function walkSync(currentDirPath, bindToObject) {
 
 
 class App {
-    static createServer(){
+    static createServer() {
         return new App();
     }
     constructor() {
@@ -203,8 +203,7 @@ class App {
                             params = JSON.parse(postData.toString());
                         } else {
                             let postString = postData.toString();
-                            if(postString.length>0)
-                            {
+                            if (postString.length > 0) {
                                 params = JSON.parse(JSON.stringify(queryString.parse(postData.toString())));
 
                             }
@@ -297,10 +296,18 @@ class App {
     async listen(port, httpsOptions = null) {
         try {
             if (httpsOptions) {
-                require("https").createServer(httpsOptions, await this.callback()).listen(port);
-            } else
-                require("http").createServer(await this.callback()).listen(port);
-            console.log("server start at port:" + port)
+                let server = require("https").createServer(httpsOptions, await this.callback());
+                server.listen(port);
+                console.log("server start at port:" + port)
+
+                return server;
+            } else {
+                let server = require("http").createServer(await this.callback());
+                server.listen(port);
+                console.log("server start at port:" + port)
+
+                return server;
+            }
         } catch (error) {
             console.log(error);
         }

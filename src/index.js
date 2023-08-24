@@ -255,10 +255,10 @@ class App {
 
                     let m_len = this.$runtime.middlewares.length;
                     for (let i = 0; i < m_len; i++) {
+                        await this.$runtime.middlewares[i](handler_object, this.globalData);
                         if (!handler_object.canNext) {
                             return;
                         }
-                        await this.$runtime.middlewares[i](handler_object, this.globalData);
                     }
 
                     handler = handler.handler;

@@ -38,7 +38,7 @@ interface GlobalData {
 declare class App {
     constructor();
     globalData: GlobalData;
-    module(name: String, modulePath: String);
+    module(name: String, modulePath: String):App;
     init(hook: InitHandler): App;
     use(handler: ContextHandler): App;
     service(name: String, service: Object): App;

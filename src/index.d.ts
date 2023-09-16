@@ -34,6 +34,8 @@ interface GlobalData {
     [key: any]: any
 }
 
+type Controller = Record;
+
 
 declare class App {
     constructor();
@@ -47,6 +49,7 @@ declare class App {
     listen(port: Number, httpsOptions?: https.ServerOptions): Promise<http.Server>;
     callback(): Promise<http.RequestListener>
     static createServer():App;
+    static defineController(controller:Controller):Controller;
 }
 
 export = App;

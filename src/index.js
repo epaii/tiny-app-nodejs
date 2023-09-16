@@ -26,6 +26,7 @@ class App {
     static createServer() {
         return new App();
     }
+    static defineController(controller){ return controller; }
     constructor() {
         this.route_maps = {};
         this.module_s = {};

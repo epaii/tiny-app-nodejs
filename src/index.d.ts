@@ -26,7 +26,7 @@ export interface Context {
     content(content: String): void;
 }
 export interface ContextHandler {
-    (ctx: Context, globalData: GlobalData): PromiseAble;
+    (ctx: Context, globalData: GlobalData): any;
 }
 
 export interface GlobalData {

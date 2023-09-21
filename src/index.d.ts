@@ -18,7 +18,7 @@ export interface Context {
     res: http.ServerResponse,
     req: http.IncomingMessage,
     shareData: Object,
-    params(key?: String, dvalue?: any): void;
+    params(key?: String, dvalue?: any): any;
     paramsSet(key: String, value: any): void;
     success(data: any): void;
     error(msg?: string, code?: Number, data?: any): void;

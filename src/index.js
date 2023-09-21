@@ -131,8 +131,12 @@ class App {
 
                 if (!moduleInfo.apps.hasOwnProperty(app_tmp[0])) {
                     let file = moduleInfo.dir + "/" + app_tmp[0] + ".js";
+                    if (!fs.existsSync(file)) {
+                        file = moduleInfo.dir + "/" + app_tmp[0] + ".ts";
+                    }
                     if (fs.existsSync(file)) {
                         let m = require(file);
+                        if(m.default) m = m.default;
                         if (typeof m === "function") {
                             moduleInfo.apps[app_tmp[0]] = m.bind(this.globalData);
                         } else if (typeof m === "object") {
@@ -244,7 +248,7 @@ class App {
                             this.canNext = false;
                         },
                         html(htmlString) {
-                            this.res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+                            this.res.setHeader('Content-Type', 'text/html; charset=utf-8');
                             this.res.end(htmlString);
                             this.canNext = false;
                         },

@@ -38,7 +38,7 @@ export type Controller = Record<string, ContextHandler>;
 export declare class App {
     constructor();
     globalData: GlobalData;
-    module(name: String, module: String|Record<string,Controller|Record<string,Controller>>): App;
+    module(name: String, module: String|Controller|Record<string,Controller>): App;
     init(hook: InitHandler): App;
     use(handler: ContextHandler): App;
     service(name: String, service: Object): App;

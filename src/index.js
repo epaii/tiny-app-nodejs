@@ -119,6 +119,11 @@ class App {
     }
     findHander(pathname) {
         for (let key in this.route_maps) {
+            if (key === pathname) {
+                return { handler: this.route_maps[key], gets: [] }
+            }
+        }
+        for (let key in this.route_maps) {
 
             const reg = new RegExp("^" + key, "i");
             const reg_info = reg.exec(pathname);
@@ -282,7 +287,7 @@ class App {
                     if ((typeof handler === "object") && handler.handler) {
                         //判断是否有app
                         if (!params.app) {
-                            let app_tmp_s = pathname.replace(handler.name + "/", "").split("/");
+                            let app_tmp_s = (pathname.endsWith("/")?pathname:`${pathname}/`).replace(handler.name + "/", "").split("/");
                             params.app = app_tmp_s[0] + (app_tmp_s.length > 1 ? ("@" + app_tmp_s[1]) : "");
                         }
                         handler = handler.handler(params);

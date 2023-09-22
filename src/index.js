@@ -2,7 +2,6 @@ const url = require("url");
 const queryString = require("querystring");
 const fs = require("fs");
 const path = require("path");
-const { constants } = require("buffer");
 
 function walkSync(currentDirPath, bindToObject) {
     var fs = require('fs'),
@@ -26,7 +25,7 @@ class App {
     static createServer() {
         return new App();
     }
-    static defineController(controller){ return controller; }
+    static defineController(controller) { return controller; }
     constructor() {
         this.route_maps = {};
         this.module_s = {};
@@ -60,25 +59,36 @@ class App {
             data: data
         })
     }
-    module(name, baseDir) {
+    module(name, baseDirOrObject) {
         if (arguments.length == 1) {
             name = "epii-app";
-            baseDir = arguments[0]
-        }
-        if (!fs.existsSync(baseDir)) {
-            console.log(baseDir + "is not exist");
+            baseDirOrObject = arguments[0]
         }
 
-        if (name.indexOf("/") === 0) {
-            name = name.substr(1);
-        }
-        this.module_s["/" + name] = {
-            dir: baseDir,
-            apps: {
+        if (typeof baseDirOrObject === "object") {
+            this.module_s["/" + name] = {
+                apps: baseDirOrObject,
+                name: "/" + name
+            }
+        } else if (typeof baseDirOrObject === "string") {
 
-            },
-            name: "/" + name
+            if (!fs.existsSync(baseDirOrObject)) {
+                console.log(baseDirOrObject + "is not exist");
+                return this;
+            }
+
+            if (name.indexOf("/") === 0) {
+                name = name.substr(1);
+            }
+            this.module_s["/" + name] = {
+                dir: baseDirOrObject,
+                apps: {
+
+                },
+                name: "/" + name
+            }
         }
+
         return this;
     }
     init(callback) {
@@ -136,7 +146,7 @@ class App {
                     }
                     if (fs.existsSync(file)) {
                         let m = require(file);
-                        if(m.default) m = m.default;
+                        if (m.default) m = m.default;
                         if (typeof m === "function") {
                             moduleInfo.apps[app_tmp[0]] = m.bind(this.globalData);
                         } else if (typeof m === "object") {
@@ -155,7 +165,9 @@ class App {
 
                 if (moduleInfo.apps[app_tmp[0]]) {
                     if (typeof moduleInfo.apps[app_tmp[0]] === "function") {
-                        return moduleInfo.apps[app_tmp[0]]
+                        return function(){
+                            return moduleInfo.apps[app_tmp[0]](...arguments);
+                        }
                     }
                     if ((typeof moduleInfo.apps[app_tmp[0]] === "object") && moduleInfo.apps[app_tmp[0]].hasOwnProperty(app_tmp[1])) {
                         return moduleInfo.apps[app_tmp[0]][app_tmp[1]].bind(moduleInfo.apps[app_tmp[0]]);

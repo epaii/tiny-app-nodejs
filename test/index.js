@@ -31,5 +31,12 @@ new  App().serviceDir(__dirname+"/service").use(function(ctx){
     ctx.success("hello world"+ JSON.stringify(ctx.params()));    
 
 })
-.route("/assets",require(__dirname+"/../../tiny-app-nodejs-assets-handler/src/index.js").callback(__dirname+"/assets"))
+// .route("/assets",require(__dirname+"/../../tiny-app-nodejs-assets-handler/src/index.js").callback(__dirname+"/assets"))
+.module("ss",{
+    ee:{
+        ss:function(){
+            return 9999;
+        }
+    }
+})
 .module(__dirname+"/app").listen(8896);

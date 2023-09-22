@@ -12,8 +12,6 @@ export interface InitHandler {
     (app: App, globalData?: GlobalData): PromiseAble;
 }
 
-
-
 export interface Context {
     res: http.ServerResponse,
     req: http.IncomingMessage,
@@ -40,7 +38,7 @@ export type Controller = Record<string, ContextHandler>;
 export declare class App {
     constructor();
     globalData: GlobalData;
-    module(name: String, modulePath: String): App;
+    module(name: String, module: String|Record<string,Controller|Record<string,Controller>>): App;
     init(hook: InitHandler): App;
     use(handler: ContextHandler): App;
     service(name: String, service: Object): App;
